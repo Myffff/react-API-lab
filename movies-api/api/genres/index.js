@@ -1,11 +1,20 @@
 import express from 'express';
-import { genres} from './genresData';
+import Genres from './genreModel';
 
-const router = express.Router(); 
+const router = express.Router(); // eslint-disable-line
 
-router.get('/', (req, res) => {
-    res.json(genres);
+// Get all users
+router.get('/', async (req, res) => {
+    const genres = await Genres.find();
+    res.status(200).json(genres);
 });
 
-
+// register(Create)/Authenticate User
+router.post('/', async (req, res) => {
+    await Genres(req.body).save();
+    res.status(201).json({
+        code: 201,
+        msg: 'Successful created new user.',
+    });
+});
 export default router;
