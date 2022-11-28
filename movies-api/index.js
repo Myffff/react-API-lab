@@ -7,6 +7,7 @@ import usersRouter from './api/users';
 import genresRouter from './api/genres';
 import session from 'express-session';
 import authenticate from './authenticate';
+import passport from './authenticate';
 
 dotenv.config();
 
@@ -22,16 +23,13 @@ const errHandler = (err, req, res, next) => {
 const app = express();
 const port = process.env.PORT;
 
-app.use(session({
-  secret: 'ilikecake',
-  resave: true,
-  saveUninitialized: true
-}));
+app.use(passport.initialize());
+
 
 app.use(express.json());
-app.use('/api/movies', moviesRouter);
 app.use('/api/users', usersRouter); //Users router
 app.use('/api/genres', genresRouter); //Genres router
+app.use('/api/movies', passport.authenticate('jwt', {session: false}), moviesRouter);
 app.use(errHandler);
 
 app.listen(port, () => {
